@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+#pin output dir
+obj-intel64/
+out/
