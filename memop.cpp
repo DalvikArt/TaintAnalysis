@@ -7,10 +7,11 @@
 
 using namespace std;
 
-VOID ReadMemToRegHandler(UINT64 insAddr, string disassamble, UINT64 memOp)
+VOID ReadMemToRegHandler(INS ins, UINT64 memOp)
 {
     list<UINT64>::iterator i;
     UINT64 addr = memOp;
+    REG reg;
     
     for(i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
     {
@@ -21,16 +22,17 @@ VOID ReadMemToRegHandler(UINT64 insAddr, string disassamble, UINT64 memOp)
     } 
 }
 
-VOID WriteMemHandler(UINT64 insAddr, string disassamble, UINT64 memOp)
+VOID WriteMemHandler(INS ins, UINT64 memOp)
 {
     list<UINT64>::iterator i;
     UINT64 addr = memOp;
+    UINT64 writeAddr = writeOp;
 
     for(i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
     {
         if (addr == *i)
         {
-            cout << hex << "[WRITE\tin 0x" << addr << "] 0x" << insAddr << ": " << disassamble << endl;
+            cout << hex << "[WRITE\tin 0x" << addr << "] 0x" << insAddr << " write op : 0x"<< writeAddr <<": " << disassamble << endl;
         }
     } 
 }

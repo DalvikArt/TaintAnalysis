@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# VSCode
+.vscode
+
 # Pin log files
 pin.log
 
