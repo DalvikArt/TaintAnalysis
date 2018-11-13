@@ -5,6 +5,7 @@
 
 #include "readsyscall.h"
 #include "memop.h"
+#include "regop.h"
 
 using namespace std;
 
@@ -28,6 +29,6 @@ VOID Instruction(INS ins, VOID *v)
     }
     else if (INS_OperandCount(ins) > 1 && INS_OperandIsReg(ins, 0))
     {
-        INS_InsertCall( ins, IPOINT_BEFORE, (AFUNPTR)spreadRegTaint, IARG_PTR, ins, IARG_END);
+        INS_InsertCall( ins, IPOINT_BEFORE, (AFUNPTR)RegisterHandler, IARG_PTR, ins, IARG_END);
     }
 }

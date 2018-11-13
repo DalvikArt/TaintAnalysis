@@ -92,14 +92,19 @@ $(OBJDIR)readsyscall$(OBJ_SUFFIX): readsyscall.cpp readsyscall.h
 $(OBJDIR)memop$(OBJ_SUFFIX): memop.cpp memop.h
 	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
+# register operation handler
+$(OBJDIR)regop$(OBJ_SUFFIX): regop.cpp regop.h
+	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
 GLOBAL_FILES = $(OBJDIR)global$(OBJ_SUFFIX) global.h
 DISPATCHER_FILES = $(OBJDIR)dispatcher$(OBJ_SUFFIX) dispatcher.h
 READ_SYSCALL_FILES = $(OBJDIR)readsyscall$(OBJ_SUFFIX) readsyscall.h
 MEMORY_OPERATION_FILES = $(OBJDIR)memop$(OBJ_SUFFIX) memop.h
+REGISTER_OPERATION_FILES = $(OBJDIR)regop$(OBJ_SUFFIX) regop.h
 
 OUTDIR = out/
 
-DEPENDENCIES = $(GLOBAL_FILES) $(DISPATCHER_FILES) $(READ_SYSCALL_FILES) $(MEMORY_OPERATION_FILES)
+DEPENDENCIES = $(GLOBAL_FILES) $(DISPATCHER_FILES) $(READ_SYSCALL_FILES) $(MEMORY_OPERATION_FILES) $(REGISTER_OPERATION_FILES)
 # Build the tool as a dll (shared object).
 $(OBJDIR)taint$(PINTOOL_SUFFIX): $(OBJDIR)taint$(OBJ_SUFFIX) $(DEPENDENCIES)
 	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $(^:%.h=) $(TOOL_LPATHS) $(TOOL_LIBS)
