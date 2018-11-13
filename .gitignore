@@ -31,6 +31,9 @@
 *.out
 *.app
 
-#pin output dir
+# Pin log files
+pin.log
+
+# Pin output dir
 obj-intel64/
 out/
