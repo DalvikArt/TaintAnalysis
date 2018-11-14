@@ -24,6 +24,8 @@ VOID ReadMemToRegHandler(INS ins, UINT64 memOp)
 
 VOID WriteMemHandler(INS ins, UINT64 memOp)
 {
+    //cout << INS_Disassemble(ins) << endl;
+
     list<UINT64>::iterator i;
     UINT64 addr = memOp;
 
