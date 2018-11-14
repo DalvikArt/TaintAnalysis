@@ -3,6 +3,7 @@
 
 #include "readsyscall.h"
 #include "dispatcher.h"
+#include "image.h"
 
 using namespace std;
 
@@ -15,8 +16,9 @@ int main(int argc, char *argv[])
     }
 
     PIN_AddSyscallEntryFunction(SyscallEntryHandler, NULL);
-
     PIN_AddSyscallExitFunction(SyscallExitHandler,NULL);
+
+    IMG_AddInstrumentFunction(Image, NULL);
 
     INS_AddInstrumentFunction(Instruction, NULL);
 

@@ -26,16 +26,23 @@ VOID addMemTainted(UINT64 addr)
 
 VOID ReadMemToRegHandler(INS ins, UINT64 memOp)
 {
-    list<UINT64>::iterator i;
     UINT64 addr = memOp;
-    REG reg_r;
     
     if(INS_OperandCount(ins) != 2)
     return;
 
-    reg_r = INS_OperandReg(ins, 0);
+    REG reg_r = INS_OperandReg(ins, 0);
 
-    for(i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
+    for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
+    {
+        if (addr >= i->base && addr < (i->base + i->size) && i->status == FREE)
+        {
+        cout << hex << "[UAF in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
+        return;
+        }
+    }
+
+    for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
     {
         if (addr == *i)
         {
@@ -58,16 +65,23 @@ VOID ReadMemToRegHandler(INS ins, UINT64 memOp)
 
 VOID WriteMemHandler(INS ins, UINT64 memOp)
 {
-    list<UINT64>::iterator i;
     UINT64 addr = memOp;
-    REG reg_r;
 
     if(INS_OperandCount(ins) != 2)
         return;
-    
-    reg_r = INS_OperandReg(ins, 1);
 
-    for(i = bytesTainted.begin(); i != bytesTainted.end(); i++)
+    REG reg_r = INS_OperandReg(ins, 1);
+
+    for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
+    {
+        if (addr >= i->base && addr < (i->base + i->size) && i->status == FREE)
+        {
+            cout << hex << "[UAF in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
+            return;
+        }
+    }
+
+    for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); i++)
     {
         if (addr == *i)
         {
