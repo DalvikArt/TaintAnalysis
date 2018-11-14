@@ -10,14 +10,14 @@ static size_t lastSize;
 
 VOID callbackBeforeMalloc(ADDRINT size)
 {
-  lastSize = size;
+    lastSize = size;
 }
 
 VOID callbackBeforeFree(ADDRINT addr)
 { 
-  list<MallocArea>::iterator i;
+    list<MallocArea>::iterator i;
   
-    cout << "[INFO]\t\tfree(" << hex << addr << ")" << endl;
+    cout << "[INFO] free(" << hex << addr << ")" << endl;
     for(i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
     {
         if (addr == i->base)
@@ -33,7 +33,7 @@ VOID callbackAfterMalloc(ADDRINT ret)
     list<MallocArea>::iterator i;
     MallocArea elem;
 
-    cout << "[INFO]\t\tmalloc(" << lastSize << ") = " << hex << ret << endl;
+    cout << "[INFO] malloc(" << lastSize << ") = " << hex << ret << endl;
     if (ret)
     {
         for(i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)

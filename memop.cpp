@@ -24,21 +24,19 @@ VOID addMemTainted(UINT64 addr)
     #endif
 }
 
-VOID ReadMemToRegHandler(INS ins, UINT64 memOp)
+VOID ReadMemToRegHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_r, UINT64 memOp)
 {
     UINT64 addr = memOp;
     
-    if(INS_OperandCount(ins) != 2)
-    return;
-
-    REG reg_r = INS_OperandReg(ins, 0);
+    if(opCount != 2)
+        return;
 
     for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
     {
         if (addr >= i->base && addr < (i->base + i->size) && i->status == FREE)
         {
-        cout << hex << "[UAF in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
-        return;
+            cout << hex << "[UAF in " << addr << "]\t" << insAddr << ": " << insDis << endl;
+            return;
         }
     }
 
@@ -47,36 +45,34 @@ VOID ReadMemToRegHandler(INS ins, UINT64 memOp)
         if (addr == *i)
         {
             #ifdef _VERBOSE
-            cout << hex << "[READ in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
+            cout << hex << "[READ in " << addr << "]\t" << insAddr << ": " << insDis << endl;
             #endif
             taintReg(reg_r);
-            return ;
+            return;
         }
     } 
 
     if (checkAlreadyRegTainted(reg_r))
     {
         #ifdef _VERBOSE
-        cout << hex << "[READ in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
+        cout << hex << "[READ in " << addr << "]\t" << insAddr << ": " << insDis << endl;
         #endif
         removeRegTainted(reg_r);
     }
 }
 
-VOID WriteMemHandler(INS ins, UINT64 memOp)
+VOID WriteMemHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_r, UINT64 memOp)
 {
     UINT64 addr = memOp;
 
-    if(INS_OperandCount(ins) != 2)
+    if(opCount != 2)
         return;
-
-    REG reg_r = INS_OperandReg(ins, 1);
 
     for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
     {
         if (addr >= i->base && addr < (i->base + i->size) && i->status == FREE)
         {
-            cout << hex << "[UAF in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
+            cout << hex << "[UAF in " << addr << "]\t" << insAddr << ": " << insDis << endl;
             return;
         }
     }
@@ -86,7 +82,7 @@ VOID WriteMemHandler(INS ins, UINT64 memOp)
         if (addr == *i)
         {
             #ifdef _VERBOSE
-            cout << hex << "[WRITE in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
+            cout << hex << "[WRITE in " << addr << "]\t" << insAddr << ": " << insDis << endl;
             #endif
             if (!REG_valid(reg_r) || !checkAlreadyRegTainted(reg_r))
                 removeMemTainted(addr);
@@ -96,7 +92,7 @@ VOID WriteMemHandler(INS ins, UINT64 memOp)
     if (checkAlreadyRegTainted(reg_r))
     {
         #ifdef _VERBOSE
-        cout << hex << "[WRITE in " << addr << "]\t" << INS_Address(ins) << ": " << INS_Disassemble(ins) << endl;
+        cout << hex << "[WRITE in " << addr << "]\t" << insAddr << ": " << insDis << endl;
         #endif
         addMemTainted(addr);
     }

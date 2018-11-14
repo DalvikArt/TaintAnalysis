@@ -1,5 +1,5 @@
 #include "pin.H"
 
-VOID ReadMemToRegHandler(INS ins, UINT64 memOp);
+VOID ReadMemToRegHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_r, UINT64 memOp);
 
-VOID WriteMemHandler(INS ins, UINT64 memOp);
+VOID WriteMemHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_r, UINT64 memOp);

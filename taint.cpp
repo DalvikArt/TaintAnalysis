@@ -9,6 +9,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    PIN_InitSymbols();
+
     if(PIN_Init(argc,argv))
     {
         cerr << "load file " << argv[0] << "failed!" << endl;
