@@ -1,6 +1,7 @@
 #include <iostream>
 #include "pin.H"
 
+#include "readsyscall.h"
 #include "dispatcher.h"
 
 using namespace std;
@@ -13,7 +14,9 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    PIN_AddSyscallEntryFunction(Syscall_Dispatcher, NULL);
+    PIN_AddSyscallEntryFunction(SyscallEntryHandler, NULL);
+
+    PIN_AddSyscallExitFunction(SyscallExitHandler,NULL);
 
     INS_AddInstrumentFunction(Instruction, NULL);
 

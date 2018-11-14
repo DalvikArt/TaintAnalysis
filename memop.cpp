@@ -65,7 +65,7 @@ VOID WriteMemHandler(INS ins, UINT64 memOp)
     if(INS_OperandCount(ins) != 2)
         return;
     
-    reg_r = INS_OperandReg(ins,0);
+    reg_r = INS_OperandReg(ins, 1);
 
     for(i = bytesTainted.begin(); i != bytesTainted.end(); i++)
     {

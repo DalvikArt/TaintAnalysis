@@ -1,3 +1,5 @@
 #include "pin.H"
 
-void ReadSyscallHandler(CONTEXT *ctx, SYSCALL_STANDARD std);
+VOID SyscallEntryHandler(THREADID thread_id, CONTEXT *ctx, SYSCALL_STANDARD std, void *v);
+
+VOID SyscallExitHandler(THREADID thread_id, CONTEXT *ctx, SYSCALL_STANDARD std, void *v);

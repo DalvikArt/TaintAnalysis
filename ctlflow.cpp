@@ -7,21 +7,22 @@
 
 using namespace std;
 
+VOID CallHandler(INS ins, CONTEXT *ctx)
+{
+    ADDRINT rsp = PIN_GetContextReg(ctx, REG_RSP);
+
+    bytesTainted.remove(rsp);
+}
+
 VOID RetHandler(INS ins, CONTEXT *ctx)
 {
-    ADDRINT sp = PIN_GetContextReg(ctx, REG_RSP);
-
-    ADDRINT retAddr = 0;
-
-    PIN_SafeCopy(&retAddr, (VOID *)sp, sizeof(retAddr));
-
-    cout << hex << "Ret addr: 0x"<< retAddr << endl;
+    ADDRINT rsp = PIN_GetContextReg(ctx, REG_RSP);
 
     for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
     {
-        if(retAddr == *i)
+        if(rsp == *i)
         {
-            cout << "Overflow occured!"<<endl;
+            cout << "\033[1;31mOverflow occured!!!\033[0m" << " Process will be terminated." << endl;
             exit(0);
         }
     }

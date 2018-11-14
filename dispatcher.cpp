@@ -10,14 +10,6 @@
 
 using namespace std;
 
-VOID Syscall_Dispatcher(THREADID thread_id, CONTEXT *ctx, SYSCALL_STANDARD std, void *v)
-{
-    if(PIN_GetSyscallNumber(ctx, std) == __NR_read) // syscall(SYS_read, fd, buf, count)
-    {
-        ReadSyscallHandler(ctx, std);
-    }
-}
-
 VOID Instruction(INS ins, VOID *v)
 {
     if (INS_OperandCount(ins) > 1 && INS_MemoryOperandIsRead(ins, 0) && INS_OperandIsReg(ins, 0))
@@ -32,13 +24,12 @@ VOID Instruction(INS ins, VOID *v)
     {
         INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)RegisterHandler, IARG_PTR, ins, IARG_END);
     }
-    else //if (INS_IsRet(ins))
+    else if (INS_IsRet(ins))
     {
-        string disasm(INS_Disassemble(ins));
-
-        if((int)disasm.find("ret") != -1)
-        {
-            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)RetHandler, IARG_PTR, ins, IARG_CONTEXT, IARG_END);
-        }
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)RetHandler, IARG_PTR, ins, IARG_CONTEXT, IARG_END);
+    }
+    else if (INS_IsCall(ins))
+    {
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)CallHandler, IARG_PTR, ins, IARG_CONTEXT, IARG_END);
     }
 }
