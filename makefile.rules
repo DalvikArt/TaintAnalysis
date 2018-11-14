@@ -73,40 +73,40 @@ SANITY_SUBSET := $(TEST_TOOL_ROOTS) $(TEST_ROOTS)
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
 
-$(OBJDIR)taint$(OBJ_SUFFIX): taint.cpp
+$(OBJDIR)taint$(OBJ_SUFFIX): src/taint.cpp
 	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # global
-$(OBJDIR)global$(OBJ_SUFFIX): global.cpp global.h
+$(OBJDIR)global$(OBJ_SUFFIX): src/global.cpp src/global.h
 	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # dispatcher
-$(OBJDIR)dispatcher$(OBJ_SUFFIX): dispatcher.cpp dispatcher.h
+$(OBJDIR)dispatcher$(OBJ_SUFFIX): src/dispatcher.cpp src/dispatcher.h
 	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # read syscall handler
-$(OBJDIR)readsyscall$(OBJ_SUFFIX): readsyscall.cpp readsyscall.h
+$(OBJDIR)readsyscall$(OBJ_SUFFIX): src/readsyscall.cpp src/readsyscall.h
 	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # memory operation handler
-$(OBJDIR)memop$(OBJ_SUFFIX): memop.cpp memop.h
+$(OBJDIR)memop$(OBJ_SUFFIX): src/memop.cpp src/memop.h
 	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # register operation handler
-$(OBJDIR)regop$(OBJ_SUFFIX): regop.cpp regop.h
+$(OBJDIR)regop$(OBJ_SUFFIX): src/regop.cpp src/regop.h
 	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
 # control flow handler
-$(OBJDIR)ctlflow$(OBJ_SUFFIX): ctlflow.cpp ctlflow.h
+$(OBJDIR)ctlflow$(OBJ_SUFFIX): src/ctlflow.cpp src/ctlflow.h
 	$(CC) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
 
-GLOBAL_FILES = $(OBJDIR)global$(OBJ_SUFFIX) global.h
-DISPATCHER_FILES = $(OBJDIR)dispatcher$(OBJ_SUFFIX) dispatcher.h
-READ_SYSCALL_FILES = $(OBJDIR)readsyscall$(OBJ_SUFFIX) readsyscall.h
-MEMORY_OPERATION_FILES = $(OBJDIR)memop$(OBJ_SUFFIX) memop.h
-REGISTER_OPERATION_FILES = $(OBJDIR)regop$(OBJ_SUFFIX) regop.h
-CONTROL_FLOW_FILES = $(OBJDIR)ctlflow$(OBJ_SUFFIX) ctlflow.h
-IMAGE_FILES = $(OBJDIR)image$(OBJ_SUFFIX) image.h
+GLOBAL_FILES = $(OBJDIR)global$(OBJ_SUFFIX) src/global.h
+DISPATCHER_FILES = $(OBJDIR)dispatcher$(OBJ_SUFFIX) src/dispatcher.h
+READ_SYSCALL_FILES = $(OBJDIR)readsyscall$(OBJ_SUFFIX) src/readsyscall.h
+MEMORY_OPERATION_FILES = $(OBJDIR)memop$(OBJ_SUFFIX) src/memop.h
+REGISTER_OPERATION_FILES = $(OBJDIR)regop$(OBJ_SUFFIX) src/regop.h
+CONTROL_FLOW_FILES = $(OBJDIR)ctlflow$(OBJ_SUFFIX) src/ctlflow.h
+IMAGE_FILES = $(OBJDIR)image$(OBJ_SUFFIX) src/image.h
 
 OUTDIR = out/
 
