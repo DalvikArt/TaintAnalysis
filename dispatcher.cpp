@@ -6,6 +6,7 @@
 #include "readsyscall.h"
 #include "memop.h"
 #include "regop.h"
+#include "ctlflow.h"
 
 using namespace std;
 
@@ -29,6 +30,15 @@ VOID Instruction(INS ins, VOID *v)
     }
     else if (INS_OperandCount(ins) > 1 && INS_OperandIsReg(ins, 0))
     {
-        INS_InsertCall( ins, IPOINT_BEFORE, (AFUNPTR)RegisterHandler, IARG_PTR, ins, IARG_END);
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)RegisterHandler, IARG_PTR, ins, IARG_END);
+    }
+    else //if (INS_IsRet(ins))
+    {
+        string disasm(INS_Disassemble(ins));
+
+        if((int)disasm.find("ret") != -1)
+        {
+            INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)RetHandler, IARG_PTR, ins, IARG_CONTEXT, IARG_END);
+        }
     }
 }
