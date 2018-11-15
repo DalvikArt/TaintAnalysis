@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    // init symbols to add instrument in libs
+    // init symbols table to add instrument in routines
     PIN_InitSymbols();
 
     // exit if pin init failed

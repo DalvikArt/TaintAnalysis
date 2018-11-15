@@ -10,19 +10,22 @@ static size_t lastSize;
 
 VOID callbackBeforeMalloc(ADDRINT size)
 {
+    // save the malloc size
     lastSize = size;
 }
 
 VOID callbackBeforeFree(ADDRINT addr)
 { 
-    list<MallocArea>::iterator i;
-  
+    #ifdef _VERBOSE
     cout << "[INFO] free(" << hex << addr << ")" << endl;
-    for(i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
+    #endif
+
+    // mark the malloc area as FREED
+    for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
     {
         if (addr == i->base)
         {
-            i->status = FREE;
+            i->status = FREED;
             break;
         }
     }
@@ -30,33 +33,40 @@ VOID callbackBeforeFree(ADDRINT addr)
 
 VOID callbackAfterMalloc(ADDRINT ret)
 {
-    list<MallocArea>::iterator i;
-    MallocArea elem;
-
+    #ifdef _VERBOSE
     cout << "[INFO] malloc(" << lastSize << ") = " << hex << ret << endl;
+    #endif
+
     if (ret)
     {
-        for(i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
+        // mark the area as ALLOCATED if the malloc area is in malloc list
+        for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
         {
             if (ret == i->base)
             {
-                i->status = ALLOCATE;
+                i->status = ALLOCATED;
                 i->size = lastSize;
                 return;
             }
         }
+
+        // add area to malloc list if the area is not in malloc list
+        MallocArea elem;
         elem.base = ret;
         elem.size = lastSize;
-        elem.status = ALLOCATE;
+        elem.status = ALLOCATED;
+
         mallocAreaList.push_front(elem);
     }
 }
 
 VOID Image(IMG img, VOID *v)
 {
+    // get malloc and free rtn
     RTN mallocRtn = RTN_FindByName(img, "malloc");
     RTN freeRtn = RTN_FindByName(img, "free");
 
+    // insert malloc before and after callback
     if (RTN_Valid(mallocRtn))
     {
         RTN_Open(mallocRtn);
@@ -68,6 +78,7 @@ VOID Image(IMG img, VOID *v)
         RTN_Close(mallocRtn);
     }
 
+    // insert free before callback
     if (RTN_Valid(freeRtn))
     {
         RTN_Open(freeRtn);

@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// remove mem from tainted list
 VOID removeMemTainted(UINT64 addr)
 {
     bytesTainted.remove(addr);
@@ -16,6 +17,7 @@ VOID removeMemTainted(UINT64 addr)
     #endif
 }
 
+// remove mem into tainted list
 VOID addMemTainted(UINT64 addr)
 {
     bytesTainted.push_back(addr);
@@ -31,15 +33,18 @@ VOID ReadMemToRegHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_
     if(opCount != 2)
         return;
 
+    // check the malloc list
     for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
     {
-        if (addr >= i->base && addr < (i->base + i->size) && i->status == FREE)
+        // print UAF information if the operand is in allocated area and this area has been freed
+        if (addr >= i->base && addr < (i->base + i->size) && i->status == FREED)
         {
             cout << hex << "[UAF in " << addr << "]\t" << insAddr << ": " << insDis << endl;
             return;
         }
     }
 
+    // taint the register if mem read is tained mem
     for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
     {
         if (addr == *i)
@@ -52,6 +57,7 @@ VOID ReadMemToRegHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_
         }
     } 
 
+    // remove reg from tainted list if the mem is not a tainted mem and the reg is a tained reg
     if (checkAlreadyRegTainted(reg_r))
     {
         #ifdef _VERBOSE
@@ -68,15 +74,17 @@ VOID WriteMemHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_r, U
     if(opCount != 2)
         return;
 
+    // UAF check (same as read handler)
     for(list<MallocArea>::iterator i = mallocAreaList.begin(); i != mallocAreaList.end(); i++)
     {
-        if (addr >= i->base && addr < (i->base + i->size) && i->status == FREE)
+        if (addr >= i->base && addr < (i->base + i->size) && i->status == FREED)
         {
             cout << hex << "[UAF in " << addr << "]\t" << insAddr << ": " << insDis << endl;
             return;
         }
     }
 
+    // remove mem from tainted list if the reg is not a tainted reg
     for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); i++)
     {
         if (addr == *i)
@@ -89,6 +97,8 @@ VOID WriteMemHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_r, U
             return ;
         }
     }
+
+    // add mem into tainted list if the reg is a tainted reg and the mem is not a tained mem
     if (checkAlreadyRegTainted(reg_r))
     {
         #ifdef _VERBOSE

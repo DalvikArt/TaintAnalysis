@@ -11,11 +11,13 @@ VOID CallHandler(INS ins, CONTEXT *ctx)
 {
     ADDRINT rsp = PIN_GetContextReg(ctx, REG_RSP);
 
+    // remove rsp - 8 (the address return address will be pushed into) from tainted list
     bytesTainted.remove(rsp - 8);
 }
 
 VOID RetHandler(INS ins, ADDRINT insAddr, string disAsm, UINT64 stackPtr)
 {
+    // terminate process if the return address is in the tainted list
     for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
     {
         if(stackPtr == *i)

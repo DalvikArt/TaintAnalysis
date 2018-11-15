@@ -3,8 +3,8 @@
 
 #define _VERBOSE
 
-#define ALLOCATE  1
-#define FREE      !ALLOCATE
+#define ALLOCATED  1
+#define FREED      !ALLOCATED
 
 typedef struct
 {
