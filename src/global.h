@@ -1,5 +1,6 @@
 #include "pin.H"
 #include <list>
+#include <hash_set>
 
 #define _VERBOSE
 
@@ -13,7 +14,7 @@ typedef struct
   BOOL    status;
 } MallocArea;
 
-extern list<UINT64> bytesTainted;
+extern hash_set<UINT64> bytesTainted;
 extern list<REG> regsTainted;
 
 extern list<MallocArea> mallocAreaList;

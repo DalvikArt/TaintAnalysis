@@ -39,7 +39,7 @@ VOID SyscallExitHandler(THREADID thread_id, CONTEXT *ctx, SYSCALL_STANDARD std, 
         for(UINT64 i = 0; i < size; ++i)
         {
             // add every byte in tainted list
-            bytesTainted.push_back(start + i);
+            bytesTainted.insert(start + i);
         }
 
         #ifdef _VERBOSE

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <list>
+#include <hash_set>
 
 #include "global.h"
 #include "regop.h"
@@ -11,16 +12,22 @@ using namespace std;
 // remove mem from tainted list
 VOID removeMemTainted(UINT64 addr)
 {
-    bytesTainted.remove(addr);
-    #ifdef _VERBOSE
-    cout << hex << "\t\t\t" << addr << " is now freed" << endl;
-    #endif
+    hash_set<UINT64>::iterator itr = bytesTainted.find(addr);
+
+    if(itr != bytesTainted.end())
+    {
+        bytesTainted.erase(itr);
+        #ifdef _VERBOSE
+        cout << hex << "\t\t\t" << addr << " is now freed" << endl;
+        #endif
+    }
+
 }
 
 // remove mem into tainted list
 VOID addMemTainted(UINT64 addr)
 {
-    bytesTainted.push_back(addr);
+    bytesTainted.insert(addr);
     #ifdef _VERBOSE
     cout << hex << "\t\t\t" << addr << " is now tainted" << endl;
     #endif
@@ -45,17 +52,17 @@ VOID ReadMemToRegHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_
     }
 
     // taint the register if mem read is tained mem
-    for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); ++i)
+    
+    hash_set<UINT64>::iterator itr = bytesTainted.find(addr);
+    if(itr != bytesTainted.end())
     {
-        if (addr == *i)
-        {
-            #ifdef _VERBOSE
-            cout << hex << "[READ in " << addr << "]\t" << insAddr << ": " << insDis << endl;
-            #endif
-            taintReg(reg_r);
-            return;
-        }
-    } 
+        #ifdef _VERBOSE
+        cout << hex << "[READ in " << addr << "]\t" << insAddr << ": " << insDis << endl;
+        #endif
+        taintReg(reg_r);
+        return;
+    }
+    
 
     // remove reg from tainted list if the mem is not a tainted mem and the reg is a tained reg
     if (checkAlreadyRegTainted(reg_r))
@@ -85,17 +92,15 @@ VOID WriteMemHandler(UINT64 insAddr, string insDis, UINT32 opCount, REG reg_r, U
     }
 
     // remove mem from tainted list if the reg is not a tainted reg
-    for(list<UINT64>::iterator i = bytesTainted.begin(); i != bytesTainted.end(); i++)
+    hash_set<UINT64>::iterator itr = bytesTainted.find(addr);
+    if(itr != bytesTainted.end())
     {
-        if (addr == *i)
-        {
             #ifdef _VERBOSE
             cout << hex << "[WRITE in " << addr << "]\t" << insAddr << ": " << insDis << endl;
             #endif
             if (!REG_valid(reg_r) || !checkAlreadyRegTainted(reg_r))
                 removeMemTainted(addr);
             return ;
-        }
     }
 
     // add mem into tainted list if the reg is a tainted reg and the mem is not a tained mem
