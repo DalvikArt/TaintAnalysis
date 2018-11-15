@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
@@ -18,4 +19,9 @@ int main(int argc, char *argv[])
     write(1, buffer, readNum);
 
     return 0;
+}
+
+void backdoor()
+{
+    system("/bin/sh");
 }
