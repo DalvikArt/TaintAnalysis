@@ -34,7 +34,7 @@ VOID Instruction(INS ins, VOID *v)
     // insert RETURN handler if the instruction is return
     else if(INS_IsRet(ins))
     {
-        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)RetHandler, IARG_PTR, ins, IARG_CONTEXT, IARG_END);
+        INS_InsertCall(ins, IPOINT_BEFORE, (AFUNPTR)RetHandler, IARG_PTR, ins, IARG_ADDRINT, INS_Address(ins), IARG_PTR, new string(INS_Disassemble(ins)), IARG_REG_VALUE, REG_STACK_PTR, IARG_END);
     }
     // insert CALL handler if the instruction is call
     else if(INS_IsCall(ins))
