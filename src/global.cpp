@@ -1,7 +1,7 @@
 #include "global.h"
 
 // memory tainted list
-list<UINT64> bytesTainted;
+hash_set<UINT64> bytesTainted;
 // register tainted list
 list<REG> regsTainted;
 

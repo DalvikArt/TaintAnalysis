@@ -21,12 +21,18 @@ void Test::foo(void)
 
 int main()
 {
+  // alloc a new object
   Test *ptr = new Test(1234);
   Test *old = ptr;
 
   ptr->foo();
+
+  // free the object
   delete ptr;
+  // use after free
   ptr->foo();
+
+  // old pointer point to the new object
   ptr = new Test(4321);
   old->foo();
 }
